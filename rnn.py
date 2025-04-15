@@ -29,19 +29,26 @@ class RNN(nn.Module):
     def compute_Loss(self, predicted_vector, gold_label):
         return self.loss(predicted_vector, gold_label)
 
-    def forward(self, inputs):
+    def forward(self, inputs, h0=None):
         # [to fill] obtain hidden layer representation (https://pytorch.org/docs/stable/generated/torch.nn.RNN.html)
-        _, hidden = 
-        # [to fill] obtain output layer representations
+        seq_len, batch_size, _ = inputs.size()
+        if h0 is None:
+            h0 = torch.zeros(self.numOfLayer, batch_size, self.h)
+        ht = h0
 
-        # [to fill] sum over output 
+        # [to fill] obtain output layer representations
+        output, hidden = self.rnn(inputs, h0)
+
+        # [to fill] sum over output
+        output_sum = torch.sum(output, dim=0)
 
         # [to fill] obtain probability dist.
+        predicted_vector = self.softmax(self.W(output_sum))
 
         return predicted_vector
 
 
-def load_data(train_data, val_data):
+def load_data(train_data, val_data):  
     with open(train_data) as training_f:
         training = json.load(training_f)
     with open(val_data) as valid_f:
@@ -166,15 +173,19 @@ if __name__ == "__main__":
         print("Validation accuracy for epoch {}: {}".format(epoch + 1, correct / total))
         validation_accuracy = correct/total
 
-        if validation_accuracy < last_validation_accuracy and trainning_accuracy > last_train_accuracy:
-            stopping_condition=True
-            print("Training done to avoid overfitting!")
-            print("Best validation accuracy is:", last_validation_accuracy)
-        else:
-            last_validation_accuracy = validation_accuracy
-            last_train_accuracy = trainning_accuracy
+        # if validation_accuracy < last_validation_accuracy and trainning_accuracy > last_train_accuracy:
+        #     stopping_condition=True
+        #     print("Training done to avoid overfitting!")
+        #     print("Best validation accuracy is:", last_validation_accuracy)
+        # else:
+        #     last_validation_accuracy = validation_accuracy
+        #     last_train_accuracy = trainning_accuracy
 
         epoch += 1
+        if epoch == args.epochs:
+            stopping_condition = True
+            print("Training done to avoid overfitting!")
+            print("Best validation accuracy is:", last_validation_accuracy)
 
 
 

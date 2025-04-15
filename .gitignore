@@ -134,3 +134,7 @@ training.json
 validation.json
 test.json
 Data_Embedding.zip
+Data_Embedding/
+.DS_Store
+CS4395_Assignment2_report_sp25.pdf
+CS4395_Assignment2_sp25.pdf
